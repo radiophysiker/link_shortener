@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"github.com/radiophysiker/link_shortener/internal/config"
 	"github.com/radiophysiker/link_shortener/internal/entity"
 	"github.com/radiophysiker/link_shortener/internal/utils"
 )
@@ -12,11 +13,13 @@ type URLRepository interface {
 
 type URLUseCase struct {
 	urlRepository URLRepository
+	config        *config.Config
 }
 
-func NewURLShortener(re URLRepository) *URLUseCase {
+func NewURLShortener(re URLRepository, config *config.Config) *URLUseCase {
 	return &URLUseCase{
 		urlRepository: re,
+		config:        config,
 	}
 }
 

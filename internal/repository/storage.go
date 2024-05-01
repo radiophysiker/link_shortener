@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+
 	"github.com/radiophysiker/link_shortener/internal/entity"
 )
 
@@ -15,7 +16,7 @@ type URLStorage struct {
 	urls map[ShortURL]FullURL
 }
 
-func NewURLStorage() *URLStorage {
+func NewURLRepository() *URLStorage {
 	return &URLStorage{
 		urls: make(map[ShortURL]FullURL),
 	}
