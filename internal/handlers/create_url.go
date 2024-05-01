@@ -24,5 +24,6 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("http://localhost:8080/" + shortURL))
+	baseURL := h.config.GetBaseURL()
+	w.Write([]byte(baseURL + "/" + shortURL))
 }
