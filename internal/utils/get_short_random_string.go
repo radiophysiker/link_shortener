@@ -14,7 +14,7 @@ func GetShortRandomString() string {
 	countOfAlphabet := len(alphabet)
 	var encodedBuilder strings.Builder
 	encodedBuilder.Grow(countOfCharacters)
-	for i := 0; i < countOfCharacters; i++ {
+	for range countOfCharacters {
 		encodedBuilder.WriteByte(alphabet[rand.Intn(countOfAlphabet)])
 	}
 

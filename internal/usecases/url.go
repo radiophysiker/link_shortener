@@ -19,10 +19,10 @@ type URLUseCase struct {
 	config        *config.Config
 }
 
-func NewURLShortener(re URLRepository, config *config.Config) *URLUseCase {
+func NewURLShortener(re URLRepository, cfg *config.Config) *URLUseCase {
 	return &URLUseCase{
 		urlRepository: re,
-		config:        config,
+		config:        cfg,
 	}
 }
 
