@@ -19,5 +19,8 @@ func Run() {
 	useCasesURLShortener := usecases.NewURLShortener(urlRepository, cfg)
 
 	router := v1.NewRouter(useCasesURLShortener, cfg)
-	http.ListenAndServe(cfg.GetServerPort(), router)
+	err = http.ListenAndServe(cfg.GetServerPort(), router)
+	if err != nil {
+		log.Fatalf("cannot start server! %s", err)
+	}
 }

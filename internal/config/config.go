@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/caarlos0/env/v10"
 )
@@ -15,7 +16,7 @@ var cfg Config
 
 func LoadConfig() (*Config, error) {
 	if err := env.Parse(&cfg); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse config: %w", err)
 	}
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "address and port to run server")
 	flag.StringVar(&cfg.ServerPort, "a", cfg.ServerPort, "address and port for result url")

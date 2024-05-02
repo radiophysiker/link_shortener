@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"fmt"
+
 	"github.com/radiophysiker/link_shortener/internal/config"
 	"github.com/radiophysiker/link_shortener/internal/entity"
 	"github.com/radiophysiker/link_shortener/internal/utils"
@@ -32,11 +34,15 @@ func (us URLUseCase) CreateShortURL(fullURL string) (string, error) {
 	}
 	err := us.urlRepository.Save(url)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to save URL: %w", err)
 	}
 	return shortURL, nil
 }
 
 func (us URLUseCase) GetFullURL(shortURL string) (string, error) {
-	return us.urlRepository.GetFullURL(shortURL)
+	fullURL, err := us.urlRepository.GetFullURL(shortURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to get full URL: %w", err)
+	}
+	return fullURL, nil
 }

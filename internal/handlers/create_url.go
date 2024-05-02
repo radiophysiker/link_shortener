@@ -15,7 +15,10 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	url := string(body)
 	if url == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("url is empty"))
+		_, err := w.Write([]byte("url is empty"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 	shortURL, err := h.URLUseCase.CreateShortURL(url)
@@ -25,5 +28,8 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	baseURL := h.config.GetBaseURL()
-	w.Write([]byte(baseURL + "/" + shortURL))
+	_, err = w.Write([]byte(baseURL + "/" + shortURL))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
