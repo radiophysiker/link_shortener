@@ -11,7 +11,10 @@ func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
 	fullURL, err := h.URLUseCase.GetFullURL(shortURL)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("url is not found for " + shortURL))
+		_, err := w.Write([]byte("url is not found for " + shortURL))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 	w.Header().Set("Location", fullURL)

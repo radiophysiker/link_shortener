@@ -12,7 +12,7 @@ type URL interface {
 	GetFullURL(shortURL string) (string, error)
 }
 
-// NewRouter creates a new router for the v1 API
+// NewRouter creates a new router for the v1 API.
 func NewRouter(u URL, cfg *config.Config) *chi.Mux {
 	r := chi.NewRouter()
 	urlHandler := handlers.NewURLHandler(u, cfg)
