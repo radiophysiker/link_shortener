@@ -3,6 +3,7 @@ package handlers
 import (
 	"io"
 	"net/http"
+	"path"
 )
 
 func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
@@ -27,8 +28,9 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	baseURL := h.config.GetBaseURL()
-	_, err = w.Write([]byte(baseURL + "/" + shortURL))
+	baseURL := h.config.BaseURL
+	shortURLPath := path.Join(baseURL, shortURL)
+	_, err = w.Write([]byte(shortURLPath))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}

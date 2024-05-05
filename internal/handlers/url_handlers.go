@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"github.com/go-chi/chi"
-
 	"github.com/radiophysiker/link_shortener/internal/config"
 )
 
@@ -21,9 +19,4 @@ func NewURLHandler(u URL, cfg *config.Config) *URLHandler {
 		URLUseCase: u,
 		config:     cfg,
 	}
-}
-
-func (h *URLHandler) RegisterRoutes(r chi.Router) {
-	r.Post("/", h.CreateShortURL)
-	r.Get("/{id}", h.GetFullURL)
 }

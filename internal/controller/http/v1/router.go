@@ -3,7 +3,6 @@ package v1
 import (
 	"github.com/go-chi/chi"
 
-	"github.com/radiophysiker/link_shortener/internal/config"
 	"github.com/radiophysiker/link_shortener/internal/handlers"
 )
 
@@ -13,9 +12,9 @@ type URL interface {
 }
 
 // NewRouter creates a new router for the v1 API.
-func NewRouter(u URL, cfg *config.Config) *chi.Mux {
+func NewRouter(h *handlers.URLHandler) *chi.Mux {
 	r := chi.NewRouter()
-	urlHandler := handlers.NewURLHandler(u, cfg)
-	urlHandler.RegisterRoutes(r)
+	r.Post("/", h.CreateShortURL)
+	r.Get("/{id}", h.GetFullURL)
 	return r
 }

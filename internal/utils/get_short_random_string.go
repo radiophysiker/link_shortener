@@ -5,12 +5,9 @@ import (
 	"strings"
 )
 
-const (
-	countOfCharacters = 8
-	alphabet          = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-)
+const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
 
-func GetShortRandomString() string {
+func GetShortRandomString(countOfCharacters int) string {
 	countOfAlphabet := len(alphabet)
 	var encodedBuilder strings.Builder
 	encodedBuilder.Grow(countOfCharacters)

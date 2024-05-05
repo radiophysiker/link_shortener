@@ -2,22 +2,20 @@ package utils
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
+	"unicode/utf8"
 )
 
 func TestGetShortRandomString(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		{
-			name: "simple",
-		},
+	length := 10
+	result := GetShortRandomString(length)
+
+	if utf8.RuneCountInString(result) != length {
+		t.Errorf("Expected string of length %d, but got %d", length, utf8.RuneCountInString(result))
 	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			got := GetShortRandomString()
-			assert.Equal(t, 8, len(got))
-		})
+
+	// Check if the string is unique by running the function again
+	secondResult := GetShortRandomString(length)
+	if result == secondResult {
+		t.Errorf("Expected unique strings, but got two identical ones")
 	}
 }
