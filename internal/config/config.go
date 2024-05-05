@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/caarlos0/env/v10"
+	"github.com/caarlos0/env/v11"
 )
 
 type Config struct {
@@ -22,12 +22,4 @@ func LoadConfig() (*Config, error) {
 	flag.StringVar(&cfg.ServerPort, "a", cfg.ServerPort, "address and port for result url")
 	flag.Parse()
 	return &cfg, nil
-}
-
-func (c *Config) GetServerPort() string {
-	return c.ServerPort
-}
-
-func (c *Config) GetBaseURL() string {
-	return c.BaseURL
 }

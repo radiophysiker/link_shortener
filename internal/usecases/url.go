@@ -8,6 +8,8 @@ import (
 	"github.com/radiophysiker/link_shortener/internal/utils"
 )
 
+const lenShortenedURL = 6
+
 //go:generate mockery --name=URLRepository --output=./mocks --filename=fs.go
 type URLRepository interface {
 	Save(url entity.URL) error
@@ -27,7 +29,7 @@ func NewURLShortener(re URLRepository, cfg *config.Config) *URLUseCase {
 }
 
 func (us URLUseCase) CreateShortURL(fullURL string) (string, error) {
-	shortURL := utils.GetShortRandomString()
+	shortURL := utils.GetShortRandomString(lenShortenedURL)
 	url := entity.URL{
 		ShortURL: shortURL,
 		FullURL:  fullURL,

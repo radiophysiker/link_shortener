@@ -1,7 +1,14 @@
 package main
 
-import "github.com/radiophysiker/link_shortener/internal/app"
+import (
+	"log"
+
+	"github.com/radiophysiker/link_shortener/internal/app"
+)
 
 func main() {
-	app.Run()
+	err := app.Run()
+	if err != nil {
+		log.Fatalf("cannot run the app! %v", err)
+	}
 }
