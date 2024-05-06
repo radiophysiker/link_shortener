@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/radiophysiker/link_shortener/internal/entity"
+	"github.com/radiophysiker/link_shortener/internal/usecases"
 )
 
 type (
@@ -22,23 +22,31 @@ func NewURLRepository() *URLStorage {
 	}
 }
 
+func (s URLStorage) IsFullURLExists(fullURL FullURL) bool {
+	for _, url := range s.urls {
+		if url == fullURL {
+			return true
+		}
+	}
+	return false
+}
+
 func (s URLStorage) Save(url entity.URL) error {
 	fullURL := url.FullURL
 	if fullURL == "" {
-		return errors.New("empty full URL")
+		return usecases.ErrEmptyFullURL
 	}
 	s.urls[url.ShortURL] = fullURL
-	fmt.Println(url.ShortURL, fullURL)
 	return nil
 }
 
 func (s URLStorage) GetFullURL(shortURL ShortURL) (FullURL, error) {
 	if shortURL == "" {
-		return "", errors.New("empty short URL")
+		return "", usecases.ErrEmptyShortURL
 	}
 	fullURL, exists := s.urls[shortURL]
 	if !exists {
-		return "", errors.New("URL not found for " + shortURL)
+		return "", fmt.Errorf("%w for: %s", usecases.ErrURLNotFound, shortURL)
 	}
 	return fullURL, nil
 }
