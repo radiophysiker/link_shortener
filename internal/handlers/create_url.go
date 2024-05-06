@@ -16,8 +16,8 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	fullUrl := string(body)
-	if fullUrl == "" {
+	fullURL := string(body)
+	if fullURL == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		_, err := w.Write([]byte("url is empty"))
 		if err != nil {
@@ -25,7 +25,7 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	shortURL, err := h.URLUseCase.CreateShortURL(fullUrl)
+	shortURL, err := h.URLUseCase.CreateShortURL(fullURL)
 	if err != nil {
 		if errors.Is(err, usecases.ErrURLExists) {
 			w.WriteHeader(http.StatusConflict)
