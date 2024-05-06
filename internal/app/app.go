@@ -1,7 +1,8 @@
 package app
 
 import (
-	"log"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/radiophysiker/link_shortener/internal/config"
@@ -14,7 +15,7 @@ import (
 func Run() error {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("cannot load config! %s", err)
+		return fmt.Errorf("cannot load config: %w", err)
 	}
 	urlRepository := repository.NewURLRepository()
 	useCasesURLShortener := usecases.NewURLShortener(urlRepository, cfg)
@@ -23,7 +24,9 @@ func Run() error {
 	router := v1.NewRouter(urlHandler)
 	err = http.ListenAndServe(cfg.ServerPort, router)
 	if err != nil {
-		log.Fatalf("cannot start server! %v", err)
+		if !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf("HTTP server has encountered an error: %w", err)
+		}
 	}
 	return nil
 }
