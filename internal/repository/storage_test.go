@@ -15,32 +15,6 @@ func TestNewURLRepository(t *testing.T) {
 	assert.NotNil(t, urlStorage, "NewURLRepository should return a non-nil URLStorage")
 }
 
-func TestIsFullURLExists(t *testing.T) {
-	urlStorage := NewURLRepository()
-	url := entity.URL{
-		ShortURL: "short",
-		FullURL:  "full",
-	}
-	err := urlStorage.Save(url)
-	require.NoError(t, err, "Save should not return an error")
-
-	exists := urlStorage.IsFullURLExists("full")
-	assert.True(t, exists, "IsFullURLExists should return true for existing FullURL")
-}
-
-func TestIsFullURLExistsWithNotFoundFullURL(t *testing.T) {
-	urlStorage := NewURLRepository()
-	url := entity.URL{
-		ShortURL: "short",
-		FullURL:  "full",
-	}
-	err := urlStorage.Save(url)
-	require.NoError(t, err, "Save should not return an error")
-
-	exists := urlStorage.IsFullURLExists("not_found")
-	assert.False(t, exists, "IsFullURLExists should return false for not found FullURL")
-}
-
 func TestSave(t *testing.T) {
 	urlStorage := NewURLRepository()
 	url := entity.URL{

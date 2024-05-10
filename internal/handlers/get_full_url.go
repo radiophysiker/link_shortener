@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
 
 	"github.com/radiophysiker/link_shortener/internal/usecases"
+	"github.com/radiophysiker/link_shortener/internal/utils"
 )
 
 func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +19,7 @@ func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			_, err := w.Write([]byte("short url is empty"))
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
+				utils.WriteErrorWithCannotWriteResponse(w, err)
 			}
 			return
 		}
@@ -25,10 +27,11 @@ func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			_, err := w.Write([]byte("url is not found for " + shortURL))
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
+				utils.WriteErrorWithCannotWriteResponse(w, err)
 			}
 			return
 		}
+		log.Printf("cannot get full URL: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
