@@ -22,24 +22,30 @@ func NewURLRepository() *URLStorage {
 	}
 }
 
-func (s URLStorage) IsFullURLExists(fullURL FullURL) bool {
-	for _, url := range s.urls {
-		if url == fullURL {
+// IsShortURLExists checks if the short URL exists in memory.
+func (s URLStorage) IsShortURLExists(url entity.URL) bool {
+	for shortURL := range s.urls {
+		if shortURL == url.ShortURL {
 			return true
 		}
 	}
 	return false
 }
 
+// Save saves the URL in memory.
 func (s URLStorage) Save(url entity.URL) error {
 	fullURL := url.FullURL
 	if fullURL == "" {
 		return usecases.ErrEmptyFullURL
 	}
+	if s.IsShortURLExists(url) {
+		return fmt.Errorf("%w for: %s", usecases.ErrURLExists, url.ShortURL)
+	}
 	s.urls[url.ShortURL] = fullURL
 	return nil
 }
 
+// GetFullURL returns the full URL by the short URL.
 func (s URLStorage) GetFullURL(shortURL ShortURL) (FullURL, error) {
 	if shortURL == "" {
 		return "", usecases.ErrEmptyShortURL

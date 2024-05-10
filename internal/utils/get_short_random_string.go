@@ -6,6 +6,7 @@ import (
 
 var alphabet = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
 
+// GetShortRandomString returns a random string of the specified length.
 func GetShortRandomString(countOfCharacters int) string {
 	countOfAlphabet := len(alphabet)
 	s := make([]rune, countOfCharacters)

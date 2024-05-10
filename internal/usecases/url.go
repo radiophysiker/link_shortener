@@ -10,6 +10,7 @@ import (
 )
 
 const lenShortenedURL = 6
+const maxNumberAttempts = 5
 
 var (
 	ErrURLExists     = errors.New("URL already exists")
@@ -18,11 +19,9 @@ var (
 	ErrURLNotFound   = errors.New("URL not found")
 )
 
-//go:generate mockery --name=URLRepository --output=./mocks --filename=fs.go
 type URLRepository interface {
 	Save(url entity.URL) error
 	GetFullURL(shortURL string) (string, error)
-	IsFullURLExists(fullURL string) bool
 }
 
 type URLUseCase struct {
@@ -37,11 +36,13 @@ func NewURLShortener(re URLRepository, cfg *config.Config) *URLUseCase {
 	}
 }
 
+// CreateShortURL creates a short URL.
 func (us URLUseCase) CreateShortURL(fullURL string) (string, error) {
-	isExists := us.urlRepository.IsFullURLExists(fullURL)
-	if isExists {
-		return "", ErrURLExists
-	}
+	return us.retryCreateShortURL(1, fullURL)
+}
+
+// retryCreateShortURL is a recursive function that tries to create a short URL.
+func (us URLUseCase) retryCreateShortURL(numberAttempts int, fullURL string) (string, error) {
 	shortURL := utils.GetShortRandomString(lenShortenedURL)
 	url := entity.URL{
 		ShortURL: shortURL,
@@ -52,11 +53,20 @@ func (us URLUseCase) CreateShortURL(fullURL string) (string, error) {
 		if errors.Is(err, ErrEmptyFullURL) {
 			return "", ErrEmptyFullURL
 		}
+		if errors.Is(err, ErrURLExists) {
+			if numberAttempts >= maxNumberAttempts {
+				// if we have reached the maximum number of attempts, we return an error
+				return "", ErrURLExists
+			} else {
+				return us.retryCreateShortURL(numberAttempts+1, fullURL)
+			}
+		}
 		return "", fmt.Errorf("failed to save URL: %w", err)
 	}
 	return shortURL, nil
 }
 
+// GetFullURL returns the full URL by the short URL.
 func (us URLUseCase) GetFullURL(shortURL string) (string, error) {
 	fullURL, err := us.urlRepository.GetFullURL(shortURL)
 	if err != nil {
