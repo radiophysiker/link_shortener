@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -19,7 +18,7 @@ func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			_, err := w.Write([]byte("short url is empty"))
 			if err != nil {
-				utils.WriteErrorWithCannotWriteResponse(w, err)
+				utils.WriteErrorWithCannotWriteResponse(w, err, h.logger)
 			}
 			return
 		}
@@ -27,11 +26,11 @@ func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			_, err := w.Write([]byte("url is not found for " + shortURL))
 			if err != nil {
-				utils.WriteErrorWithCannotWriteResponse(w, err)
+				utils.WriteErrorWithCannotWriteResponse(w, err, h.logger)
 			}
 			return
 		}
-		log.Printf("cannot get full URL: %v", err)
+		h.logger.Error("cannot get full URL: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

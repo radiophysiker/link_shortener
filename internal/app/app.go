@@ -25,7 +25,7 @@ func Run() error {
 	}
 	urlRepository := repository.NewURLRepository()
 	useCasesURLShortener := usecases.NewURLShortener(urlRepository, cfg)
-	urlHandler := handlers.NewURLHandler(useCasesURLShortener, cfg)
+	urlHandler := handlers.NewURLHandler(useCasesURLShortener, cfg, l)
 
 	router := v1.NewRouter(urlHandler, l)
 	l.Info("starting server on port %s", cfg.ServerPort)
