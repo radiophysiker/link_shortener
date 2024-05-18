@@ -6,42 +6,53 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/radiophysiker/link_shortener/internal/config"
 	"github.com/radiophysiker/link_shortener/internal/entity"
 	"github.com/radiophysiker/link_shortener/internal/usecases"
 )
 
+var testConfig = &config.Config{
+	FileStoragePath: "",
+	ServerPort:      "localhost:8080",
+	BaseURL:         "http://localhost:8080",
+}
+
 func TestNewURLRepository(t *testing.T) {
-	urlStorage := NewURLRepository()
-	assert.NotNil(t, urlStorage, "NewURLRepository should return a non-nil URLStorage")
+	urlStorage, err := NewFileURLRepository(testConfig)
+	require.NoError(t, err, "NewURLRepository should not return an error")
+	assert.NotNil(t, urlStorage, "NewURLRepository should return a non-nil URLFileRepository")
 }
 
 func TestSave(t *testing.T) {
-	urlStorage := NewURLRepository()
+	urlStorage, err := NewFileURLRepository(testConfig)
+	require.NoError(t, err, "NewURLRepository should not return an error")
 	url := entity.URL{
 		ShortURL: "short",
 		FullURL:  "full",
 	}
-	err := urlStorage.Save(url)
+	err = urlStorage.Save(url)
 	assert.NoError(t, err, "Save should not return an error")
 }
 
 func TestSaveWithEmptyFullURL(t *testing.T) {
-	urlStorage := NewURLRepository()
+	urlStorage, err := NewFileURLRepository(testConfig)
+	require.NoError(t, err, "NewURLRepository should not return an error")
 	url := entity.URL{
 		ShortURL: "short",
 		FullURL:  "",
 	}
-	err := urlStorage.Save(url)
+	err = urlStorage.Save(url)
 	assert.Equal(t, usecases.ErrEmptyFullURL, err, "Save should return ErrEmptyFullURL for empty FullURL")
 }
 
 func TestGetFullURL(t *testing.T) {
-	urlStorage := NewURLRepository()
+	urlStorage, err := NewFileURLRepository(testConfig)
+	require.NoError(t, err, "NewURLRepository should not return an error")
 	url := entity.URL{
 		ShortURL: "short",
 		FullURL:  "full",
 	}
-	err := urlStorage.Save(url)
+	err = urlStorage.Save(url)
 	require.NoError(t, err, "Save should not return an error")
 
 	fullURL, err := urlStorage.GetFullURL("short")
@@ -50,20 +61,21 @@ func TestGetFullURL(t *testing.T) {
 }
 
 func TestGetFullURLWithEmptyShortURL(t *testing.T) {
-	urlStorage := NewURLRepository()
-
+	urlStorage, err := NewFileURLRepository(testConfig)
+	require.NoError(t, err, "NewURLRepository should not return an error")
 	fullURL, err := urlStorage.GetFullURL("")
 	assert.Equal(t, usecases.ErrEmptyShortURL, err, "GetFullURL should return ErrEmptyShortURL for empty shortURL")
 	assert.Empty(t, fullURL, "GetFullURL should return an empty string for empty shortURL")
 }
 
 func TestGetFullURLWithNotFoundShortURL(t *testing.T) {
-	urlStorage := NewURLRepository()
+	urlStorage, err := NewFileURLRepository(testConfig)
+	require.NoError(t, err, "NewURLRepository should not return an error")
 	url := entity.URL{
 		ShortURL: "short",
 		FullURL:  "full",
 	}
-	err := urlStorage.Save(url)
+	err = urlStorage.Save(url)
 	require.NoError(t, err, "Save should not return an error")
 
 	fullURL, err := urlStorage.GetFullURL("not_found")

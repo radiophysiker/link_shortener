@@ -23,7 +23,11 @@ func Run() error {
 		l.Errorf("cannot load config: %v", err)
 		return fmt.Errorf("cannot load config: %w", err)
 	}
-	urlRepository := repository.NewURLRepository()
+	urlRepository, err := repository.NewFileURLRepository(cfg)
+	if err != nil {
+		l.Errorf("cannot create URL repository: %v", err)
+		return fmt.Errorf("cannot create URL repository: %w", err)
+	}
 	useCasesURLShortener := usecases.NewURLShortener(urlRepository, cfg)
 	urlHandler := handlers.NewURLHandler(useCasesURLShortener, cfg, l)
 
