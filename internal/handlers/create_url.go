@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -15,7 +14,7 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Printf("cannot read request body: %v", err)
+		h.logger.Error("cannot read request body: %v", err)
 		return
 	}
 	fullURL := string(body)
@@ -23,7 +22,7 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		_, err := w.Write([]byte("url is empty"))
 		if err != nil {
-			utils.WriteErrorWithCannotWriteResponse(w, err)
+			utils.WriteErrorWithCannotWriteResponse(w, err, h.logger)
 		}
 		return
 	}
@@ -33,7 +32,7 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusConflict)
 			_, err := w.Write([]byte("url already exists"))
 			if err != nil {
-				utils.WriteErrorWithCannotWriteResponse(w, err)
+				utils.WriteErrorWithCannotWriteResponse(w, err, h.logger)
 			}
 			return
 		}
@@ -41,11 +40,11 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			_, err := w.Write([]byte("url is empty"))
 			if err != nil {
-				utils.WriteErrorWithCannotWriteResponse(w, err)
+				utils.WriteErrorWithCannotWriteResponse(w, err, h.logger)
 			}
 			return
 		}
-		log.Printf("cannot create short URL: %v", err)
+		h.logger.Error("cannot create short URL: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -53,12 +52,12 @@ func (h *URLHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	baseURL := h.config.BaseURL
 	shortURLPath, err := url.JoinPath(baseURL, shortURL)
 	if err != nil {
-		log.Printf("cannot join base URL and short URL: %v", err)
+		h.logger.Error("cannot join base URL and short URL: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	_, err = w.Write([]byte(shortURLPath))
 	if err != nil {
-		utils.WriteErrorWithCannotWriteResponse(w, err)
+		utils.WriteErrorWithCannotWriteResponse(w, err, h.logger)
 	}
 }
