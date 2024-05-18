@@ -1,8 +1,10 @@
 package v1
 
 import (
-	"github.com/go-chi/chi"
+	"github.com/radiophysiker/link_shortener/internal/middleware"
 	"net/http"
+
+	"github.com/go-chi/chi"
 
 	"github.com/radiophysiker/link_shortener/internal/handlers"
 )
@@ -18,6 +20,9 @@ type Logger interface {
 func NewRouter(h *handlers.URLHandler, log Logger) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(log.CustomMiddlewareLogger)
+	r.Use(func(next http.Handler) http.Handler {
+		return middleware.CustomCompression(next, log)
+	})
 	r.Post("/", h.CreateShortURL)
 	r.Get("/{id}", h.GetFullURL)
 	r.Post("/api/shorten", h.CreateShortURLWithJSON)

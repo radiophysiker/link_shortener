@@ -34,6 +34,7 @@ func (h *URLHandler) GetFullURL(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	h.logger.Info("redirecting to %s", fullURL)
 	w.Header().Set("Location", fullURL)
 	w.WriteHeader(http.StatusTemporaryRedirect)
 }
